@@ -1,0 +1,10 @@
+[package]
+name = "conrod_example"
+version = "0.1.0"
+authors = ["jczuchnowski <jakub.czuchnowski@gmail.com>"]
+
+[dependencies]
+conrod = { version = "0.57", features = ["glium", "winit"] }
+futures = "0.1"
+futures-timer = "0.1.0"
+rand = "0.4"
