@@ -21,6 +21,9 @@ pub fn main() {
 
     // Build the window.
     let mut events_loop = glium::glutin::EventsLoop::new();
+
+    let events_loop_proxy = events_loop.create_proxy();
+
     let window = glium::glutin::WindowBuilder::new()
         .with_title("Conrod Example")
         .with_dimensions(WIDTH, HEIGHT);
@@ -43,6 +46,7 @@ pub fn main() {
                     let x = random::<i32>();
 
                     *bc_num = x;
+                    events_loop_proxy.wakeup().unwrap();
                     Ok(())
                 })
                 .wait()
@@ -107,10 +111,14 @@ pub fn main() {
                 _ => (),
             };
 
+            // Convert Awekened into Redraw
             // Use the `winit` backend feature to convert the winit event to a conrod input.
-            let input = match conrod::backend::winit::convert_event(event, &display) {
-                None => continue,
-                Some(input) => input,
+            let input = match event {
+                glium::glutin::Event::Awakened => conrod::event::Input::Redraw,
+                _ => match conrod::backend::winit::convert_event(event, &display) {
+                    None => continue,
+                    Some(input) => input,
+                }
             };
 
             // Handle the input with the `Ui`.
